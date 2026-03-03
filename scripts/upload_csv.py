@@ -25,7 +25,7 @@ conn = snowflake.connector.connect(
 print("✅ Connected to Snowflake")
 
 # -------------------------------
-# 3. Create file format & stage (optional)
+# 3. Create file format & stage (optional, idempotent)
 # -------------------------------
 with conn.cursor() as cur:
     cur.execute("""
@@ -48,10 +48,17 @@ with conn.cursor() as cur:
 # -------------------------------
 csv_file = os.path.join(os.getcwd(), 'employees.csv')
 df = pd.read_csv(csv_file)
+
+# -------------------------------
+# 5. Fix column names to match Snowflake table
+# -------------------------------
+# Converts 'Name' -> 'NAME', 'Joining Date' -> 'JOINING_DATE', etc.
+df.columns = [c.upper().replace(" ", "_") for c in df.columns]
+
 print(f"✅ CSV loaded with {len(df)} rows")
 
 # -------------------------------
-# 5. Upload data using write_pandas
+# 6. Upload data using write_pandas
 # -------------------------------
 success, nchunks, nrows, _ = write_pandas(conn, df, 'EMPLOYEES_CICD')
 print(f"✅ Uploaded {nrows} rows in {nchunks} chunks: success={success}")
