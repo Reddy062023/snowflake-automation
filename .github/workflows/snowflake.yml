@@ -1,6 +1,6 @@
 name: Snowflake Automation (Manual)
 
-# Manual trigger only — no schedule
+# Manual trigger only
 on:
   workflow_dispatch:
 
@@ -13,14 +13,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Install SnowSQL CLI
-      - name: Install SnowSQL
+      # 2️⃣ Install dependencies and SnowSQL
+      - name: Install SnowSQL CLI
         run: |
-          # Download a valid Linux SnowSQL installer
+          sudo apt-get update
+          sudo apt-get install -y unzip curl libssl-dev
           wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.4/linux_x86_64/snowsql-1.4.3-linux_x86_64.bash -O install_snowsql.sh
           chmod +x install_snowsql.sh
           ./install_snowsql.sh --yes
-          export PATH=$PATH:$HOME/snowflake/snowsql
+          echo "$HOME/snowflake/snowsql" >> $GITHUB_PATH
 
       # 3️⃣ Run your SnowSQL script
       - name: Run upload CSV script
