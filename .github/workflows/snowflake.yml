@@ -1,33 +1,39 @@
-name: Snowflake Automation
+name: Snowflake Automation (Manual)
 
-# Trigger workflow only manually
+# Only manual trigger — no automatic schedule
 on:
-  workflow_dispatch:    # allows manual run from GitHub Actions
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout your repo
+      # 1️⃣ Checkout your repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Install SnowSQL CLI
+      # 2️⃣ Install SnowSQL CLI on Ubuntu runner
       - name: Install SnowSQL
         run: |
-          wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/latest/linux_x86_64/snowsql-linux_x86_64.bash -O install_snowsql.sh
+          # Download a valid Linux SnowSQL installer
+          wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.4/linux_x86_64/snowsql-1.4.19-linux_x86_64.bash -O install_snowsql.sh
           chmod +x install_snowsql.sh
           ./install_snowsql.sh --yes
           export PATH=$PATH:$HOME/snowflake/snowsql
 
-      # Step 3: Run your SnowSQL script
-      - name: Run SnowSQL
+      # 3️⃣ Run your SnowSQL script
+      - name: Run upload CSV script
         env:
-          SNOWSQL_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWSQL_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWSQL_PWD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
+          SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
+          SNOWSQL_PASSWORD: ${{ secrets.SNOWSQL_PASSWORD }}
         run: |
-          snowsql -a $SNOWSQL_ACCOUNT -u $SNOWSQL_USER -p $SNOWSQL_PWD \
-            -d MY_DB -s PUBLIC -w COMPUTE_WH \
-            -f scripts/upload_csv.sql
+          # Execute SnowSQL using the secrets
+          snowsql -a $SNOWSQL_ACCOUNT \
+                  -u $SNOWSQL_USER \
+                  -p $SNOWSQL_PASSWORD \
+                  -d MY_DB \
+                  -s PUBLIC \
+                  -w COMPUTE_WH \
+                  -f scripts/upload_csv.sql
