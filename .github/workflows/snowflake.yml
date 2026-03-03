@@ -1,0 +1,37 @@
+name: Snowflake Automation
+
+# Trigger workflow on push to main, manual run, or schedule daily at 2 AM UTC
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:    # allows manual run
+  schedule:
+    - cron: "0 2 * * *"  # daily at 02:00 UTC
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout your repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Install SnowSQL CLI
+      - name: Install SnowSQL
+        run: |
+          curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/latest/linux_x86_64/snowsql
+          chmod +x snowsql
+          sudo mv snowsql /usr/local/bin/
+
+      # Step 3: Run your SnowSQL script
+      - name: Run SnowSQL
+        env:
+          SNOWSQL_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWSQL_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWSQL_PWD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+        run: |
+          snowsql -a $SNOWSQL_ACCOUNT -u $SNOWSQL_USER -p $SNOWSQL_PWD \
+            -d MY_DB -s PUBLIC -w COMPUTE_WH \
+            -f scripts/upload_csv.sql
