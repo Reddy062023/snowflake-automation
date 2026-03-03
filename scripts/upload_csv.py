@@ -1,10 +1,11 @@
 import os
 import pandas as pd
+import pyarrow
 import snowflake.connector
 from snowflake.connector.pandas_tools import write_pandas
 
 # -------------------------------
-# 1. Read Snowflake credentials from environment
+# 1. Snowflake credentials from GitHub Secrets
 # -------------------------------
 SNOWSQL_ACCOUNT = os.environ['SNOWSQL_ACCOUNT']
 SNOWSQL_USER = os.environ['SNOWSQL_USER']
@@ -24,7 +25,7 @@ conn = snowflake.connector.connect(
 print("✅ Connected to Snowflake")
 
 # -------------------------------
-# 3. Optional: create file format & stage if needed
+# 3. Create file format & stage (optional)
 # -------------------------------
 with conn.cursor() as cur:
     cur.execute("""
@@ -43,7 +44,7 @@ with conn.cursor() as cur:
     print("✅ Stage created")
 
 # -------------------------------
-# 4. Read CSV
+# 4. Load CSV
 # -------------------------------
 csv_file = os.path.join(os.getcwd(), 'employees.csv')
 df = pd.read_csv(csv_file)
