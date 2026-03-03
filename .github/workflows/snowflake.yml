@@ -1,4 +1,4 @@
-name: Snowflake Automation (Manual)
+name: Snowflake Automation (Docker)
 
 # Manual trigger only
 on:
@@ -13,27 +13,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Install dependencies and SnowSQL
-      - name: Install SnowSQL CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y unzip curl libssl-dev
-          wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.4/linux_x86_64/snowsql-1.4.3-linux_x86_64.bash -O install_snowsql.sh
-          chmod +x install_snowsql.sh
-          ./install_snowsql.sh --yes
-          echo "$HOME/snowflake/snowsql" >> $GITHUB_PATH
-
-      # 3️⃣ Run your SnowSQL script
-      - name: Run upload CSV script
+      # 2️⃣ Run SnowSQL using official Docker image
+      - name: Run SnowSQL in Docker
         env:
           SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
           SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
           SNOWSQL_PASSWORD: ${{ secrets.SNOWSQL_PASSWORD }}
         run: |
-          snowsql -a $SNOWSQL_ACCOUNT \
-                  -u $SNOWSQL_USER \
-                  -p $SNOWSQL_PASSWORD \
-                  -d MY_DB \
-                  -s PUBLIC \
-                  -w COMPUTE_WH \
-                  -f scripts/upload_csv.sql
+          docker run --rm \
+            -v $GITHUB_WORKSPACE:/workspace \
+            snowflakedb/snowsql \
+            snowsql -a $SNOWSQL_ACCOUNT \
+                    -u $SNOWSQL_USER \
+                    -p $SNOWSQL_PASSWORD \
+                    -d MY_DB \
+                    -s PUBLIC \
+                    -w COMPUTE_WH \
+                    -f /workspace/scripts/upload_csv.sql
