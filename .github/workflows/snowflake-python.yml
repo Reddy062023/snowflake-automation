@@ -1,4 +1,4 @@
-name: Snowflake Automation (Python Debug)
+name: Snowflake Automation (Python)
 
 on:
   workflow_dispatch:
@@ -8,35 +8,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Python
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # 3️⃣ Install dependencies
       - name: Install Python packages
         run: |
           python -m pip install --upgrade pip
           pip install snowflake-connector-python pandas
 
-      # 4️⃣ Debug Secrets
       - name: Debug environment variables
         run: |
           echo "SNOWSQL_ACCOUNT=${SNOWSQL_ACCOUNT}"
           echo "SNOWSQL_USER=${SNOWSQL_USER}"
-          # Do NOT echo password for security!
-
         env:
           SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
           SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
           SNOWSQL_PASSWORD: ${{ secrets.SNOWSQL_PASSWORD }}
 
-      # 5️⃣ Run Python script
       - name: Upload CSV to Snowflake
         env:
           SNOWSQL_ACCOUNT: ${{ secrets.SNOWSQL_ACCOUNT }}
