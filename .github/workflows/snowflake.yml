@@ -1,6 +1,6 @@
 name: Snowflake Automation (Manual)
 
-# Only manual trigger — no automatic schedule
+# Manual trigger only — no schedule
 on:
   workflow_dispatch:
 
@@ -9,15 +9,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout your repository
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2️⃣ Install SnowSQL CLI on Ubuntu runner
+      # 2️⃣ Install SnowSQL CLI
       - name: Install SnowSQL
         run: |
           # Download a valid Linux SnowSQL installer
-          wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.4/linux_x86_64/snowsql-1.4.19-linux_x86_64.bash -O install_snowsql.sh
+          wget https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.4/linux_x86_64/snowsql-1.4.3-linux_x86_64.bash -O install_snowsql.sh
           chmod +x install_snowsql.sh
           ./install_snowsql.sh --yes
           export PATH=$PATH:$HOME/snowflake/snowsql
@@ -29,7 +29,6 @@ jobs:
           SNOWSQL_USER: ${{ secrets.SNOWSQL_USER }}
           SNOWSQL_PASSWORD: ${{ secrets.SNOWSQL_PASSWORD }}
         run: |
-          # Execute SnowSQL using the secrets
           snowsql -a $SNOWSQL_ACCOUNT \
                   -u $SNOWSQL_USER \
                   -p $SNOWSQL_PASSWORD \
