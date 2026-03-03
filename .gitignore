@@ -1,0 +1,6 @@
+# Ignore real SnowSQL config
+C:/Users/Geetu/.snowsql/config
+
+# Ignore any temporary CSV backups
+*.gz
+*.log

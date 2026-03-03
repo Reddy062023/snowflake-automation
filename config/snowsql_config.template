@@ -1,0 +1,8 @@
+[connections.cicd_snowflake]
+accountname=ewzqeyy-iic66448
+username=JAPENDRAS06
+password=Medway@01282026
+rolename=ACCOUNTADMIN
+warehousename=COMPUTE_WH
+dbname=MY_DB
+schemaname=PUBLIC
