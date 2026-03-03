@@ -1,13 +1,8 @@
 name: Snowflake Automation
 
-# Triggers: push to main, manual run, or schedule daily at 2 AM UTC
+# Trigger workflow only manually
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:    # allows manual run from GitHub Actions
-  schedule:
-    - cron: "0 2 * * *"  # daily at 2 AM UTC
 
 jobs:
   deploy:
