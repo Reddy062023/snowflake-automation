@@ -1,15 +1,19 @@
 name: Snowflake Automation (Python Safe)
 
-# Trigger: Manual trigger for testing
+# Trigger:
+# - Manual trigger for testing
+# - Scheduled daily at 2 AM UTC
 on:
-  workflow_dispatch:
+  workflow_dispatch: # manual trigger
+  schedule:
+    - cron: "0 2 * * *" # daily at 02:00 UTC
 
 jobs:
   upload_csv:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -25,7 +29,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install snowflake-connector-python pandas
 
-      # 4️⃣ Debug and check secrets
+      # 4️⃣ Check Snowflake secrets
       - name: Check Snowflake Secrets
         run: |
           echo "Checking Snowflake secrets..."
