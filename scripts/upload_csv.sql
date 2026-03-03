@@ -13,7 +13,6 @@ CREATE OR REPLACE FILE FORMAT my_csv_format
 -- Create stage (once)
 CREATE OR REPLACE STAGE my_stage
   FILE_FORMAT = my_csv_format;
-
 -- Load data into table
 COPY INTO EMPLOYEES_CICD
 FROM @my_stage/employees.csv.gz
